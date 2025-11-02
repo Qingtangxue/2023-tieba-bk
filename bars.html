@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>贴吧列表 - 百度贴吧</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        .navbar {
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #FF6B35;
+            text-decoration: none;
+        }
+        
+        .navbar-nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .nav-link {
+            color: #666;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .nav-link:hover {
+            color: #FF6B35;
+        }
+        
+        .nav-link.active {
+            color: #FF6B35;
+            font-weight: 600;
+        }
+        
+        .bars-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .page-header {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .page-header h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .search-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #FF6B35;
+        }
+        
+        .search-btn {
+            padding: 1rem 2rem;
+            background: #FF6B35;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .filter-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .filter-tab {
+            padding: 0.5rem 1rem;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .filter-tab.active {
+            background: #FF6B35;
+            color: white;
+        }
+        
+        .sort-options {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .sort-select {
+            padding: 0.5rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            background: white;
+        }
+        
+        .bars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .bar-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .bar-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .bar-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .bar-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #FF8E53 0%, #FE6B8B 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 1rem;
+        }
+        
+        .bar-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .bar-members {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .bar-description {
+            color: #666;
+            line-height: 1.4;
+            margin-bottom: 1rem;
+        }
+        
+        .bar-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: #999;
+        }
+        
+        .bar-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+        }
+        
+        .btn-primary {
+            background: #FF6B35;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #E05A2B;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #FF6B35;
+            color: #FF6B35;
+        }
+        
+        .btn-outline:hover {
+            background: #FF6B35;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #666;
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+        
+        .page-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid #e0e0e0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        
+        .page-btn.active {
+            background: #FF6B35;
+            color: white;
+            border-color: #FF6B35;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+            background: white;
+            border-radius: 12px;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .navbar-nav {
+                gap: 1rem;
+            }
+            
+            .bars-container {
+                padding: 0 1rem;
+            }
+            
+            .search-bar {
+                flex-direction: column;
+            }
+            
+            .bars-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-tabs {
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <a href="index.html" class="navbar-brand">百度贴吧</a>
+        <div class="navbar-nav">
+            <a href="index.html" class="nav-link" onclick="clearCacheAndNavigate('index.html')">首页</a>
+            <a href="bars.html" class="nav-link active">贴吧</a>
+            <a href="profile.html" class="nav-link">个人中心</a>
+            <span id="authLinks">
+                <a href="login.html" class="nav-link">登录</a>
+                <a href="register.html" class="nav-link">注册</a>
+            </span>
+        </div>
+    </nav>
+
+    <div class="bars-container">
+        <!-- 页面头部 -->
+        <div class="page-header">
+            <h1>发现贴吧</h1>
+            
+            <!-- 搜索栏 -->
+            <div class="search-bar">
+                <input type="text" class="search-input" placeholder="搜索贴吧..." id="searchInput">
+                <button class="search-btn" onclick="searchBars()">搜索</button>
+            </div>
+            
+            <!-- 筛选标签 -->
+            <div class="filter-tabs">
+                <button class="filter-tab active" onclick="filterBars('all')">全部</button>
+                <button class="filter-tab" onclick="filterBars('tech')">科技</button>
+                <button class="filter-tab" onclick="filterBars('entertainment')">娱乐</button>
+                <button class="filter-tab" onclick="filterBars('sports')">体育</button>
+                <button class="filter-tab" onclick="filterBars('life')">生活</button>
+                <button class="filter-tab" onclick="filterBars('game')">游戏</button>
+            </div>
+            
+            <!-- 排序选项 -->
+            <div class="sort-options">
+                <span>排序方式：</span>
+                <select class="sort-select" id="sortSelect" onchange="sortBars()">
+                    <option value="members">成员数</option>
+                    <option value="posts">帖子数</option>
+                    <option value="activity">活跃度</option>
+                    <option value="new">最新创建</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- 贴吧网格 -->
+        <div class="bars-grid" id="barsGrid">
+            <!-- 贴吧内容将通过JavaScript动态生成 -->
+        </div>
+
+        <!-- 分页 -->
+        <div class="pagination" id="pagination">
+            <!-- 分页按钮将通过JavaScript动态生成 -->
+        </div>
+    </div>
+
+    <script>
+        // 贴吧数据
+        const barsData = [
+            {
+                id: 1,
+                name: '编程',
+                description: '分享编程经验，学习新技术，讨论开发问题',
+                members: '125,000',
+                posts: '45,678',
+                activity: '高',
+                category: 'tech',
+                followed: false
+            },
+            {
+                id: 2,
+                name: '摄影',
+                description: '摄影爱好者聚集地，分享作品，交流技巧',
+                members: '87,000',
+                posts: '32,456',
+                activity: '中',
+                category: 'life',
+                followed: false
+            },
+            {
+                id: 3,
+                name: '旅行',
+                description: '分享旅行见闻，攻略心得，美景照片',
+                members: '153,000',
+                posts: '67,890',
+                activity: '高',
+                category: 'life',
+                followed: false
+            },
+            {
+                id: 4,
+                name: '美食',
+                description: '吃货的天堂，分享美食，交流烹饪技巧',
+                members: '231,000',
+                posts: '89,123',
+                activity: '极高',
+                category: 'life',
+                followed: false
+            },
+            {
+                id: 5,
+                name: '游戏',
+                description: '游戏玩家聚集地，攻略分享，组队开黑',
+                members: '189,000',
+                posts: '78,456',
+                activity: '极高',
+                category: 'game',
+                followed: false
+            },
+            {
+                id: 6,
+                name: '电影',
+                description: '电影爱好者交流平台，影评分享，新片讨论',
+                members: '142,000',
+                posts: '56,789',
+                activity: '高',
+                category: 'entertainment',
+                followed: false
+            },
+            {
+                id: 7,
+                name: '篮球',
+                description: '篮球爱好者聚集地，赛事讨论，技巧分享',
+                members: '98,000',
+                posts: '34,567',
+                activity: '中',
+                category: 'sports',
+                followed: false
+            },
+            {
+                id: 8,
+                name: '健身',
+                description: '健身爱好者交流平台，训练计划，营养指导',
+                members: '76,000',
+                posts: '23,456',
+                activity: '中',
+                category: 'sports',
+                followed: false
+            },
+            {
+                id: 9,
+                name: '音乐',
+                description: '音乐爱好者交流平台，歌曲推荐，乐器学习',
+                members: '113,000',
+                posts: '42,345',
+                activity: '高',
+                category: 'entertainment',
+                followed: false
+            },
+            {
+                id: 10,
+                name: '读书',
+                description: '读书爱好者聚集地，书评分享，阅读心得',
+                members: '67,000',
+                posts: '28,901',
+                activity: '中',
+                category: 'life',
+                followed: false
+            },
+            {
+                id: 11,
+                name: '股票',
+                description: '股票投资交流平台，行情分析，投资策略',
+                members: '89,000',
+                posts: '35,678',
+                activity: '高',
+                category: 'tech',
+                followed: false
+            },
+            {
+                id: 12,
+                name: '足球',
+                description: '足球爱好者聚集地，赛事讨论，球队分析',
+                members: '121,000',
+                posts: '49,012',
+                activity: '高',
+                category: 'sports',
+                followed: false
+            },
+            {
+                id: 13,
+                name: '动漫',
+                description: '动漫爱好者交流平台，新番讨论，同人创作',
+                members: '156,000',
+                posts: '61,234',
+                activity: '极高',
+                category: 'entertainment',
+                followed: false
+            },
+            {
+                id: 14,
+                name: '宠物',
+                description: '宠物爱好者聚集地，饲养经验，萌宠分享',
+                members: '78,000',
+                posts: '31,567',
+                activity: '中',
+                category: 'life',
+                followed: false
+            },
+            {
+                id: 15,
+                name: '汽车',
+                description: '汽车爱好者交流平台，车型评测，驾驶技巧',
+                members: '94,000',
+                posts: '38,901',
+                activity: '中',
+                category: 'tech',
+                followed: false
+            },
+            {
+                id: 16,
+                name: '数码',
+                description: '数码产品爱好者聚集地，新品评测，使用技巧',
+                members: '102,000',
+                posts: '41,234',
+                activity: '高',
+                category: 'tech',
+                followed: false
+            }
+        ];
+        
+        // 当前筛选和排序状态
+        let currentFilter = 'all';
+        let currentSort = 'members';
+        let currentPage = 1;
+        const itemsPerPage = 6;
+        
+        // 检查登录状态并更新导航栏
+        function updateAuthStatus() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const authLinks = document.getElementById('authLinks');
+            
+            if (isLoggedIn === 'true') {
+                const username = localStorage.getItem('username') || '用户';
+                authLinks.innerHTML = `
+                    <span style="color: #666;">欢迎，${username}</span>
+                    <a href="profile.html" class="nav-link">个人中心</a>
+                    <a href="#" class="nav-link" onclick="logout()">退出登录</a>
+                `;
+            }
+        }
+        
+        // 筛选贴吧
+        function filterBars(category) {
+            currentFilter = category;
+            currentPage = 1;
+            
+            // 更新筛选标签状态
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            renderBars();
+        }
+        
+        // 排序贴吧
+        function sortBars() {
+            currentSort = document.getElementById('sortSelect').value;
+            renderBars();
+        }
+        
+        // 搜索贴吧
+        function searchBars() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            if (searchTerm.trim() === '') {
+                renderBars();
+                return;
+            }
+            
+            const filteredBars = barsData.filter(bar => 
+                bar.name.toLowerCase().includes(searchTerm) ||
+                bar.description.toLowerCase().includes(searchTerm)
+            );
+            
+            renderBars(filteredBars);
+        }
+        
+        // 关注/取消关注贴吧
+        function toggleFollow(barId) {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            
+            if (!isLoggedIn || isLoggedIn !== 'true') {
+                alert('请先登录！');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            const bar = barsData.find(b => b.id === barId);
+            if (bar) {
+                bar.followed = !bar.followed;
+                renderBars();
+                
+                if (bar.followed) {
+                    alert(`已关注 ${bar.name}吧`);
+                } else {
+                    alert(`已取消关注 ${bar.name}吧`);
+                }
+            }
+        }
+        
+        // 进入贴吧
+        function enterBar(barName) {
+            // 在实际应用中，这里会跳转到具体的贴吧页面
+            alert(`进入 ${barName}吧`);
+            // window.location.href = `bar-detail.html?name=${barName}`;
+        }
+        
+        // 获取贴吧表情符号
+        function getBarEmoji(barName) {
+            const emojiMap = {
+                '编程': '💻',
+                '摄影': '📷',
+                '旅行': '🏔️',
+                '美食': '🍲',
+                '游戏': '🎮',
+                '电影': '🎬',
+                '篮球': '🏀',
+                '健身': '💪',
+                '音乐': '🎵',
+                '读书': '📚',
+                '股票': '📈',
+                '足球': '⚽',
+                '动漫': '🎭',
+                '宠物': '🐶',
+                '汽车': '🚗',
+                '数码': '📱'
+            };
+            
+            return emojiMap[barName] || barName.charAt(0);
+        }
+        
+        // 渲染贴吧列表
+        function renderBars(customData = null) {
+            const barsGrid = document.getElementById('barsGrid');
+            const pagination = document.getElementById('pagination');
+            
+            // 获取筛选后的数据
+            let filteredBars = customData || barsData;
+            
+            if (currentFilter !== 'all') {
+                filteredBars = filteredBars.filter(bar => bar.category === currentFilter);
+            }
+            
+            // 排序数据
+            filteredBars.sort((a, b) => {
+                switch (currentSort) {
+                    case 'members':
+                        return parseInt(b.members.replace(',', '')) - parseInt(a.members.replace(',', ''));
+                    case 'posts':
+                        return parseInt(b.posts.replace(',', '')) - parseInt(a.posts.replace(',', ''));
+                    case 'activity':
+                        const activityOrder = { '极高': 4, '高': 3, '中': 2, '低': 1 };
+                        return activityOrder[b.activity] - activityOrder[a.activity];
+                    case 'new':
+                        return b.id - a.id;
+                    default:
+                        return 0;
+                }
+            });
+            
+            // 分页计算
+            const totalPages = Math.ceil(filteredBars.length / itemsPerPage);
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedBars = filteredBars.slice(startIndex, endIndex);
+            
+            // 渲染贴吧卡片
+            if (paginatedBars.length === 0) {
+                barsGrid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <h3>没有找到相关的贴吧</h3>
+                        <p>尝试使用不同的关键词搜索</p>
+                    </div>
+                `;
+            } else {
+                barsGrid.innerHTML = paginatedBars.map(bar => `
+                    <div class="bar-card">
+                        <div class="bar-header">
+                            <div class="bar-avatar">${getBarEmoji(bar.name)}</div>
+                            <div class="bar-info">
+                                <h3>${bar.name}吧</h3>
+                                <div class="bar-members">${bar.members} 成员</div>
+                            </div>
+                        </div>
+                        
+                        <div class="bar-description">${bar.description}</div>
+                        
+                        <div class="bar-stats">
+                            <span>帖子数: ${bar.posts}</span>
+                            <span>活跃度: ${bar.activity}</span>
+                        </div>
+                        
+                        <div class="bar-actions">
+                            <button class="btn ${bar.followed ? 'btn-secondary' : 'btn-primary'}" 
+                                    onclick="toggleFollow(${bar.id})">
+                                ${bar.followed ? '已关注' : '关注'}
+                            </button>
+                            <button class="btn btn-outline" onclick="enterBar('${bar.name}')">
+                                进入贴吧
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            // 渲染分页
+            if (totalPages > 1) {
+                let paginationHTML = '';
+                
+                if (currentPage > 1) {
+                    paginationHTML += `<button class="page-btn" onclick="changePage(${currentPage - 1})">上一页</button>`;
+                }
+                
+                for (let i = 1; i <= totalPages; i++) {
+                    paginationHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+                }
+                
+                if (currentPage < totalPages) {
+                    paginationHTML += `<button class="page-btn" onclick="changePage(${currentPage + 1})">下一页</button>`;
+                }
+                
+                pagination.innerHTML = paginationHTML;
+            } else {
+                pagination.innerHTML = '';
+            }
+        }
+        
+        // 切换页面
+        function changePage(page) {
+            currentPage = page;
+            renderBars();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // 清除缓存并导航
+        function clearCacheAndNavigate(url) {
+            event.preventDefault();
+            window.location.href = url + '?' + new Date().getTime();
+        }
+        
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('username');
+                localStorage.removeItem('email');
+                window.location.href = 'index.html?' + new Date().getTime();
+            }
+        }
+        
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateAuthStatus();
+            renderBars();
+            
+            // 搜索框回车事件
+            document.getElementById('searchInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchBars();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

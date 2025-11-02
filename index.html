@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>百度贴吧</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .navbar {
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #FF6B35;
+            text-decoration: none;
+        }
+        
+        .navbar-nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .nav-link {
+            color: #666;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .nav-link:hover {
+            color: #FF6B35;
+        }
+        
+        .nav-link.active {
+            color: #FF6B35;
+            font-weight: 600;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 导航栏样式 */
+        .navbar {
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #FF6B35;
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #FF6B35;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: #E55A2B;
+        }
+        
+        .nav-user {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: #FF6B35;
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            background-color: #E55A2B;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.3);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            border: 2px solid #FF6B35;
+            color: #FF6B35;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #FF6B35;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        /* 首页内容 */
+        .hero-section {
+            background: linear-gradient(135deg, #FF8E53 0%, #FE6B8B 100%);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .hero-content h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero-content p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .search-box {
+            display: flex;
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.95);
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border: none;
+            font-size: 1rem;
+            outline: none;
+        }
+        
+        .search-btn {
+            background: #FF6B35;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .hot-posts, .hot-tiebas {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .post-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .post-item {
+            padding: 1rem;
+            border: 1px solid #f0f0f0;
+            border-radius: 8px;
+            transition: all 0.3s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .post-item:hover {
+            border-color: #FF6B35;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255,107,53,0.2);
+        }
+        
+        .post-image {
+            font-size: 2rem;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+        
+        .post-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        
+        .post-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .tieba-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+        
+        .tieba-item {
+            text-align: center;
+            padding: 1rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 1px solid #f0f0f0;
+        }
+        
+        .tieba-item:hover {
+            background-color: #f8f9fa;
+            transform: translateY(-2px);
+        }
+        
+        .tieba-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            margin: 0 auto 0.5rem;
+            background: linear-gradient(135deg, #FF8E53 0%, #FE6B8B 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .tieba-name {
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+        
+        .tieba-members {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .nav-user {
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <a href="index.html" class="navbar-brand">百度贴吧</a>
+        <div class="navbar-nav">
+            <a href="index.html" class="nav-link active">首页</a>
+            <a href="bars.html" class="nav-link">贴吧</a>
+            <a href="profile.html" class="nav-link">个人中心</a>
+            <span id="authLinks">
+                <a href="login.html" class="nav-link">登录</a>
+                <a href="register.html" class="nav-link">注册</a>
+            </span>
+        </div>
+    </nav>
+
+    <!-- 首页内容 -->
+    <div class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <h1>欢迎来到百度贴吧</h1>
+                <p>发现兴趣，结交同好，畅所欲言</p>
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="搜索贴吧、帖子、用户...">
+                    <button class="search-btn">搜索</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="main-content">
+            <!-- 热门帖子 -->
+            <div class="hot-posts">
+                <div class="section-header">
+                    <h2 class="section-title">热门帖子</h2>
+                    <a href="#" class="btn btn-secondary">查看更多</a>
+                </div>
+                <div class="post-list">
+                    <div class="post-item" onclick="viewPost(1)">
+                        <div class="post-image">📱</div>
+                        <div class="post-title">Vue3 组合式API使用心得分享</div>
+                        <div class="post-meta">
+                            <span>前端开发吧</span>
+                            <span>作者：前端开发者</span>
+                            <span>2小时前</span>
+                        </div>
+                    </div>
+                    <div class="post-item" onclick="viewPost(2)">
+                        <div class="post-image">⚛️</div>
+                        <div class="post-title">React Hooks 最佳实践总结</div>
+                        <div class="post-meta">
+                            <span>编程技术吧</span>
+                            <span>作者：React爱好者</span>
+                            <span>5小时前</span>
+                        </div>
+                    </div>
+                    <div class="post-item" onclick="viewPost(3)">
+                        <div class="post-image">💻</div>
+                        <div class="post-title">JavaScript ES6+ 新特性详解</div>
+                        <div class="post-meta">
+                            <span>前端开发吧</span>
+                            <span>作者：JavaScript学习者</span>
+                            <span>1天前</span>
+                        </div>
+                    </div>
+                    <div class="post-item" onclick="viewPost(4)">
+                        <div class="post-image">🐍</div>
+                        <div class="post-title">Python数据分析实战：从入门到精通</div>
+                        <div class="post-meta">
+                            <span>Python吧</span>
+                            <span>作者：数据科学家</span>
+                            <span>3小时前</span>
+                        </div>
+                    </div>
+                    <div class="post-item" onclick="viewPost(5)">
+                        <div class="post-image">🏔️</div>
+                        <div class="post-title">周末去哪玩？推荐几个适合拍照的好地方</div>
+                        <div class="post-meta">
+                            <span>旅行吧</span>
+                            <span>作者：旅行达人</span>
+                            <span>6小时前</span>
+                        </div>
+                    </div>
+                    <div class="post-item" onclick="viewPost(6)">
+                        <div class="post-image">🎬</div>
+                        <div class="post-title">最近上映的科幻电影《星际穿越》观后感</div>
+                        <div class="post-meta">
+                            <span>电影吧</span>
+                            <span>作者：影评人</span>
+                            <span>4小时前</span>
+                        </div>
+                    </div>
+                    <div class="post-item" onclick="viewPost(7)">
+                        <div class="post-image">💪</div>
+                        <div class="post-title">健身三个月，分享我的减脂增肌经验</div>
+                        <div class="post-meta">
+                            <span>健身吧</span>
+                            <span>作者：健身爱好者</span>
+                            <span>1天前</span>
+                        </div>
+                    </div>
+                    <div class="post-item" onclick="viewPost(8)">
+                        <div class="post-image">🎮</div>
+                        <div class="post-title">王者荣耀新赛季上分攻略：英雄推荐与打法</div>
+                        <div class="post-meta">
+                            <span>游戏吧</span>
+                            <span>作者：游戏大神</span>
+                            <span>2小时前</span>
+                        </div>
+                    </div>
+                    <div class="post-item" onclick="viewPost(9)">
+                        <div class="post-image">🍲</div>
+                        <div class="post-title">家常菜谱分享：简单易学的红烧肉做法</div>
+                        <div class="post-meta">
+                            <span>美食吧</span>
+                            <span>作者：美食博主</span>
+                            <span>8小时前</span>
+                        </div>
+                    </div>
+                    <div class="post-item" onclick="viewPost(10)">
+                        <div class="post-image">📈</div>
+                        <div class="post-title">股票投资入门：如何选择优质成长股</div>
+                        <div class="post-meta">
+                            <span>财经吧</span>
+                            <span>作者：投资顾问</span>
+                            <span>1天前</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 热门贴吧 -->
+            <div class="hot-tiebas">
+                <div class="section-header">
+                    <h2 class="section-title">热门贴吧</h2>
+                    <a href="tiebas.html" class="btn btn-secondary">查看全部</a>
+                </div>
+                <div class="tieba-grid">
+                    <div class="tieba-item" onclick="location.href='posts.html'">
+                        <div class="tieba-avatar">前端</div>
+                        <div class="tieba-name">前端开发</div>
+                        <div class="tieba-members">12,500 成员</div>
+                    </div>
+                    <div class="tieba-item" onclick="location.href='posts.html'">
+                        <div class="tieba-avatar">编程</div>
+                        <div class="tieba-name">编程技术</div>
+                        <div class="tieba-members">8,900 成员</div>
+                    </div>
+                    <div class="tieba-item" onclick="location.href='posts.html'">
+                        <div class="tieba-avatar">游戏</div>
+                        <div class="tieba-name">游戏讨论</div>
+                        <div class="tieba-members">21,000 成员</div>
+                    </div>
+                    <div class="tieba-item" onclick="location.href='posts.html'">
+                        <div class="tieba-avatar">电影</div>
+                        <div class="tieba-name">电影娱乐</div>
+                        <div class="tieba-members">15,000 成员</div>
+                    </div>
+                    <div class="tieba-item" onclick="location.href='posts.html'">
+                        <div class="tieba-avatar">旅行</div>
+                        <div class="tieba-name">旅行摄影</div>
+                        <div class="tieba-members">9,800 成员</div>
+                    </div>
+                    <div class="tieba-item" onclick="location.href='posts.html'">
+                        <div class="tieba-avatar">美食</div>
+                        <div class="tieba-name">美食分享</div>
+                        <div class="tieba-members">18,600 成员</div>
+                    </div>
+                    <div class="tieba-item" onclick="location.href='posts.html'">
+                        <div class="tieba-avatar">健身</div>
+                        <div class="tieba-name">健身运动</div>
+                        <div class="tieba-members">7,200 成员</div>
+                    </div>
+                    <div class="tieba-item" onclick="location.href='posts.html'">
+                        <div class="tieba-avatar">音乐</div>
+                        <div class="tieba-name">音乐欣赏</div>
+                        <div class="tieba-members">11,300 成员</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 检查登录状态并更新导航栏
+        function updateAuthStatus() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const authLinks = document.getElementById('authLinks');
+            
+            if (isLoggedIn === 'true') {
+                const username = localStorage.getItem('username') || '用户';
+                authLinks.innerHTML = `
+                    <span style="color: #666;">欢迎，${username}</span>
+                    <a href="profile.html" class="nav-link">个人中心</a>
+                    <a href="#" class="nav-link" onclick="logout()">退出登录</a>
+                `;
+            }
+        }
+        
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('username');
+                localStorage.removeItem('email');
+                // 强制刷新页面，确保样式正确加载
+                window.location.href = 'index.html?' + new Date().getTime();
+            }
+        }
+        
+        // 简单的搜索功能
+        document.querySelector('.search-btn').addEventListener('click', function() {
+            const query = document.querySelector('.search-input').value;
+            if (query.trim()) {
+                alert('搜索: ' + query);
+            }
+        });
+        
+        document.querySelector('.search-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.querySelector('.search-btn').click();
+            }
+        });
+        
+        // 查看帖子详情
+        function viewPost(postId) {
+            window.location.href = `post-detail.html?id=${postId}`;
+        }
+        
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateAuthStatus();
+        });
+    </script>
+</body>
+</html>

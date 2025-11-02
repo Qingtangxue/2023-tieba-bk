@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>帖子详情 - 百度贴吧</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        .navbar {
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #FF6B35;
+            text-decoration: none;
+        }
+        
+        .navbar-nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .nav-link {
+            color: #666;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .nav-link:hover {
+            color: #FF6B35;
+        }
+        
+        .nav-link.active {
+            color: #FF6B35;
+            font-weight: 600;
+        }
+        
+        .post-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .post-header {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .post-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #333;
+            line-height: 1.3;
+        }
+        
+        .post-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            color: #666;
+        }
+        
+        .author-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FF6B35 0%, #FF8E53 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .author-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .author-name {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .post-time {
+            font-size: 0.9rem;
+            color: #999;
+        }
+        
+        .post-content {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+        
+        .post-content p {
+            margin-bottom: 1rem;
+        }
+        
+        .post-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .action-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .like-btn {
+            background: #ff4757;
+            color: white;
+        }
+        
+        .like-btn:hover {
+            background: #ff3742;
+        }
+        
+        .like-btn.liked {
+            background: #2ed573;
+        }
+        
+        .comment-btn {
+            background: #FF6B35;
+            color: white;
+        }
+        
+        .comment-btn:hover {
+            background: #E55A2B;
+        }
+        
+        .share-btn {
+            background: #f0f0f0;
+            color: #666;
+        }
+        
+        .share-btn:hover {
+            background: #e0e0e0;
+        }
+        
+        .comments-section {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .comments-header {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+        
+        .comment-form {
+            margin-bottom: 2rem;
+        }
+        
+        .comment-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .comment-input:focus {
+            outline: none;
+            border-color: #FF6B35;
+        }
+        
+        .submit-btn {
+            padding: 1rem 2rem;
+            background: #FF6B35;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .submit-btn:hover {
+            background: #E55A2B;
+        }
+        
+        .comments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .comment-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+        
+        .comment-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FF6B35 0%, #FF8E53 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .comment-content {
+            flex: 1;
+        }
+        
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .comment-author {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .comment-time {
+            font-size: 0.9rem;
+            color: #999;
+        }
+        
+        .comment-text {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .comment-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+        
+        .comment-action {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .comment-action:hover {
+            color: #FF6B35;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .navbar-nav {
+                gap: 1rem;
+            }
+            
+            .post-container {
+                padding: 0 1rem;
+            }
+            
+            .post-title {
+                font-size: 1.5rem;
+            }
+            
+            .post-actions {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <a href="index.html" class="navbar-brand">百度贴吧</a>
+        <div class="navbar-nav">
+            <a href="index.html" class="nav-link">首页</a>
+            <a href="bars.html" class="nav-link">贴吧</a>
+            <a href="profile.html" class="nav-link">个人中心</a>
+            <span id="authLinks">
+                <a href="login.html" class="nav-link">登录</a>
+                <a href="register.html" class="nav-link">注册</a>
+            </span>
+        </div>
+    </nav>
+
+    <div class="post-container">
+        <!-- 帖子头部 -->
+        <div class="post-header">
+            <h1 class="post-title" id="postTitle">帖子标题</h1>
+            
+            <div class="post-meta">
+                <div class="author-avatar" id="authorAvatar">作</div>
+                <div class="author-info">
+                    <span class="author-name" id="authorName">作者名</span>
+                    <span class="post-time" id="postTime">发布时间</span>
+                </div>
+            </div>
+            
+            <div class="post-actions">
+                <button class="action-btn like-btn" id="likeBtn" onclick="toggleLike()">
+                    <span>❤️</span>
+                    <span id="likeCount">0</span>
+                </button>
+                <button class="action-btn comment-btn" onclick="scrollToComments()">
+                    <span>💬</span>
+                    <span id="commentCount">0</span>
+                </button>
+                <button class="action-btn share-btn" onclick="sharePost()">
+                    <span>📤</span>
+                    <span>分享</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 帖子内容 -->
+        <div class="post-content" id="postContent">
+            <!-- 帖子内容将通过JavaScript动态生成 -->
+        </div>
+
+        <!-- 评论区域 -->
+        <div class="comments-section">
+            <h2 class="comments-header">评论</h2>
+            
+            <!-- 评论表单 -->
+            <div class="comment-form">
+                <textarea class="comment-input" placeholder="写下你的评论..." id="commentInput"></textarea>
+                <button class="submit-btn" onclick="submitComment()">发表评论</button>
+            </div>
+            
+            <!-- 评论列表 -->
+            <div class="comments-list" id="commentsList">
+                <!-- 评论内容将通过JavaScript动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 帖子数据
+        const postsData = {
+            1: {
+                id: 1,
+                title: 'Vue3 组合式API使用心得分享',
+                author: '前端开发者',
+                time: '2小时前',
+                content: `
+                    <p>最近在项目中使用Vue3的组合式API，感觉比Options API更加灵活和强大！</p>
+                    
+                    <p>组合式API最大的优势在于逻辑复用和代码组织。通过setup函数，我们可以将相关的逻辑组织在一起，而不是按照选项（data、methods、computed等）来分散。</p>
+                    
+                    <p>比如在用户管理模块中，我可以将用户数据、用户操作、权限验证等相关的逻辑都放在一个useUser函数中，然后在组件中直接使用：</p>
+                    
+                    <pre><code>const { user, updateUser, hasPermission } = useUser();</code></pre>
+                    
+                    <p>这样代码更加清晰，也更容易维护和测试。大家有什么使用心得欢迎交流！</p>
+                `,
+                likes: 25,
+                comments: 12,
+                liked: false
+            },
+            2: {
+                id: 2,
+                title: 'React Hooks 最佳实践总结',
+                author: 'React爱好者',
+                time: '5小时前',
+                content: `
+                    <p>React Hooks已经成为了现代React开发的标准，今天分享一些最佳实践：</p>
+                    
+                    <h3>1. 自定义Hook的命名</h3>
+                    <p>自定义Hook应该以use开头，这样React才能识别并应用Hook规则。</p>
+                    
+                    <h3>2. useEffect的依赖数组</h3>
+                    <p>确保依赖数组包含所有在effect中使用的state和props，避免不必要的重渲染。</p>
+                    
+                    <h3>3. useCallback和useMemo的使用</h3>
+                    <p>不要过度使用useCallback和useMemo，只有在性能确实需要优化时才使用。</p>
+                    
+                    <p>大家还有什么好的实践建议吗？</p>
+                `,
+                likes: 18,
+                comments: 8,
+                liked: false
+            },
+            3: {
+                id: 3,
+                title: 'JavaScript ES6+ 新特性详解',
+                author: 'JavaScript学习者',
+                time: '1天前',
+                content: `
+                    <p>ES6及后续版本为JavaScript带来了很多强大的新特性，这里总结一些常用的：</p>
+                    
+                    <h3>箭头函数</h3>
+                    <p>简洁的语法，自动绑定this，非常适合回调函数。</p>
+                    
+                    <h3>解构赋值</h3>
+                    <p>可以方便地从数组或对象中提取数据，让代码更加简洁。</p>
+                    
+                    <h3>模板字符串</h3>
+                    <p>支持多行字符串和变量插值，告别繁琐的字符串拼接。</p>
+                    
+                    <h3>Promise和async/await</h3>
+                    <p>让异步编程变得更加直观和易于理解。</p>
+                    
+                    <p>这些特性大大提升了JavaScript的开发体验！</p>
+                `,
+                likes: 32,
+                comments: 15,
+                liked: false
+            }
+        };
+        
+        // 评论数据
+        const commentsData = [
+            {
+                id: 1,
+                author: '阳光男孩',
+                time: '1小时前',
+                content: '确实是个好天气！我刚从公园回来，拍了很多美照。'
+            },
+            {
+                id: 2,
+                author: '自然爱好者',
+                time: '45分钟前',
+                content: '今天我也去爬山了，山顶的风景特别美，空气也很清新。'
+            },
+            {
+                id: 3,
+                author: '城市漫步者',
+                time: '30分钟前',
+                content: '下午准备去河边散步，希望天气能一直这么好。'
+            }
+        ];
+        
+        // 检查登录状态并更新导航栏
+        function updateAuthStatus() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const authLinks = document.getElementById('authLinks');
+            
+            if (isLoggedIn === 'true') {
+                const username = localStorage.getItem('username') || '用户';
+                authLinks.innerHTML = `
+                    <span style="color: #666;">欢迎，${username}</span>
+                    <a href="profile.html" class="nav-link">个人中心</a>
+                    <a href="#" class="nav-link" onclick="logout()">退出登录</a>
+                `;
+            }
+        }
+        
+        // 加载帖子内容
+        function loadPost() {
+            // 从URL参数获取帖子ID
+            const urlParams = new URLSearchParams(window.location.search);
+            const postId = parseInt(urlParams.get('id')) || 1;
+            
+            // 获取对应的帖子数据
+            const postData = postsData[postId] || postsData[1];
+            
+            document.getElementById('postTitle').textContent = postData.title;
+            document.getElementById('authorAvatar').textContent = postData.author.charAt(0);
+            document.getElementById('authorName').textContent = postData.author;
+            document.getElementById('postTime').textContent = postData.time;
+            document.getElementById('postContent').innerHTML = postData.content;
+            document.getElementById('likeCount').textContent = postData.likes;
+            document.getElementById('commentCount').textContent = postData.comments;
+            
+            // 更新点赞按钮状态
+            const likeBtn = document.getElementById('likeBtn');
+            if (postData.liked) {
+                likeBtn.classList.add('liked');
+            } else {
+                likeBtn.classList.remove('liked');
+            }
+            
+            // 更新页面标题
+            document.title = `${postData.title} - 百度贴吧`;
+        }
+        
+        // 加载评论
+        function loadComments() {
+            const commentsList = document.getElementById('commentsList');
+            
+            if (commentsData.length === 0) {
+                commentsList.innerHTML = '<p style="text-align: center; color: #666;">暂无评论，快来发表第一条评论吧！</p>';
+                return;
+            }
+            
+            commentsList.innerHTML = commentsData.map(comment => `
+                <div class="comment-item">
+                    <div class="comment-avatar">${comment.author.charAt(0)}</div>
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <span class="comment-author">${comment.author}</span>
+                            <span class="comment-time">${comment.time}</span>
+                        </div>
+                        <div class="comment-text">${comment.content}</div>
+                        <div class="comment-actions">
+                            <button class="comment-action" onclick="likeComment(${comment.id})">点赞</button>
+                            <button class="comment-action" onclick="replyComment(${comment.id})">回复</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // 点赞/取消点赞
+        function toggleLike() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            
+            if (!isLoggedIn || isLoggedIn !== 'true') {
+                alert('请先登录！');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const postId = parseInt(urlParams.get('id')) || 1;
+            const postData = postsData[postId] || postsData[1];
+            
+            const likeBtn = document.getElementById('likeBtn');
+            const likeCount = document.getElementById('likeCount');
+            
+            if (postData.liked) {
+                // 取消点赞
+                postData.liked = false;
+                postData.likes--;
+                likeBtn.classList.remove('liked');
+            } else {
+                // 点赞
+                postData.liked = true;
+                postData.likes++;
+                likeBtn.classList.add('liked');
+            }
+            
+            likeCount.textContent = postData.likes;
+        }
+        
+        // 滚动到评论区域
+        function scrollToComments() {
+            document.querySelector('.comments-section').scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+        
+        // 分享帖子
+        function sharePost() {
+            if (navigator.share) {
+                navigator.share({
+                    title: postData.title,
+                    text: postData.content.substring(0, 100) + '...',
+                    url: window.location.href
+                });
+            } else {
+                // 备用分享方式
+                const shareUrl = window.location.href;
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                    alert('帖子链接已复制到剪贴板！');
+                });
+            }
+        }
+        
+        // 提交评论
+        function submitComment() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            
+            if (!isLoggedIn || isLoggedIn !== 'true') {
+                alert('请先登录！');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const postId = parseInt(urlParams.get('id')) || 1;
+            const postData = postsData[postId] || postsData[1];
+            
+            const commentInput = document.getElementById('commentInput');
+            const content = commentInput.value.trim();
+            
+            if (!content) {
+                alert('请输入评论内容！');
+                return;
+            }
+            
+            const username = localStorage.getItem('username') || '用户';
+            
+            // 添加新评论
+            const newComment = {
+                id: commentsData.length + 1,
+                author: username,
+                time: '刚刚',
+                content: content
+            };
+            
+            commentsData.unshift(newComment);
+            postData.comments++;
+            
+            // 更新显示
+            document.getElementById('commentCount').textContent = postData.comments;
+            commentInput.value = '';
+            loadComments();
+            
+            alert('评论发表成功！');
+        }
+        
+        // 点赞评论
+        function likeComment(commentId) {
+            alert(`点赞评论 ${commentId}`);
+        }
+        
+        // 回复评论
+        function replyComment(commentId) {
+            const comment = commentsData.find(c => c.id === commentId);
+            if (comment) {
+                const commentInput = document.getElementById('commentInput');
+                commentInput.value = `回复 @${comment.author}：`;
+                commentInput.focus();
+            }
+        }
+        
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('username');
+                localStorage.removeItem('email');
+                updateAuthStatus();
+            }
+        }
+        
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateAuthStatus();
+            loadPost();
+            loadComments();
+        });
+    </script>
+</body>
+</html>

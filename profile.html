@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>个人中心 - 百度贴吧</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        .navbar {
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #FF6B35;
+            text-decoration: none;
+        }
+        
+        .navbar-nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .nav-link {
+            color: #666;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .nav-link:hover {
+            color: #FF6B35;
+        }
+        
+        .nav-link.active {
+            color: #FF6B35;
+            font-weight: 600;
+        }
+        
+        .profile-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        .profile-header {
+            background: white;
+            border-radius: 16px;
+            padding: 3rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FF6B35 0%, #E55A2B 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        .user-details h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .user-details p {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+        
+        .stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #007AFF;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .profile-tabs {
+            display: flex;
+            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 2rem;
+        }
+        
+        .tab {
+            padding: 1rem 2rem;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 1rem;
+            color: #666;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            color: #007AFF;
+            border-bottom: 2px solid #007AFF;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .post-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .post-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .post-image {
+            font-size: 2rem;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+        
+        .post-content-wrapper {
+            flex: 1;
+        }
+        
+        .post-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        
+        .post-content {
+            color: #666;
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+        
+        .post-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #999;
+        }
+        
+        .bars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .bar-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .bar-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        
+        .bar-members {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #007AFF;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #0056CC;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #007AFF;
+            color: #007AFF;
+        }
+        
+        .btn-outline:hover {
+            background: #007AFF;
+            color: white;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+        
+        .empty-state h3 {
+            margin-bottom: 1rem;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .navbar-nav {
+                gap: 1rem;
+            }
+            
+            .profile-container {
+                padding: 0 1rem;
+            }
+            
+            .profile-header {
+                padding: 2rem;
+            }
+            
+            .profile-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .stats {
+                justify-content: center;
+            }
+            
+            .posts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-tabs {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <a href="index.html" class="navbar-brand">百度贴吧</a>
+        <div class="navbar-nav">
+            <a href="index.html" class="nav-link" onclick="clearCacheAndNavigate('index.html')">首页</a>
+            <a href="bars.html" class="nav-link">贴吧</a>
+            <a href="profile.html" class="nav-link active">个人中心</a>
+            <a href="#" class="nav-link" onclick="logout()">退出登录</a>
+        </div>
+    </nav>
+
+    <div class="profile-container">
+        <!-- 个人信息头部 -->
+        <div class="profile-header">
+            <div class="profile-info">
+                <div class="avatar" id="userAvatar">
+                    <!-- 头像显示用户名的第一个字符 -->
+                </div>
+                <div class="user-details">
+                    <h1 id="userName">用户名</h1>
+                    <p id="userEmail">邮箱地址</p>
+                    <div class="stats">
+                        <div class="stat-item">
+                            <div class="stat-number" id="postCount">0</div>
+                            <div class="stat-label">发帖数</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="barCount">0</div>
+                            <div class="stat-label">关注贴吧</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="likeCount">0</div>
+                            <div class="stat-label">获赞数</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 标签页 -->
+        <div class="profile-tabs">
+            <button class="tab active" onclick="switchTab('posts')">我的帖子</button>
+            <button class="tab" onclick="switchTab('bars')">关注的贴吧</button>
+            <button class="tab" onclick="switchTab('settings')">账号设置</button>
+        </div>
+
+        <!-- 我的帖子 -->
+        <div id="posts-tab" class="tab-content active">
+            <div class="posts-grid" id="postsGrid">
+                <!-- 帖子内容将通过JavaScript动态生成 -->
+            </div>
+        </div>
+
+        <!-- 关注的贴吧 -->
+        <div id="bars-tab" class="tab-content">
+            <div class="bars-grid" id="barsGrid">
+                <!-- 贴吧内容将通过JavaScript动态生成 -->
+            </div>
+        </div>
+
+        <!-- 账号设置 -->
+        <div id="settings-tab" class="tab-content">
+            <div style="background: white; border-radius: 12px; padding: 2rem;">
+                <h2 style="margin-bottom: 1.5rem;">账号设置</h2>
+                
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="margin-bottom: 1rem;">基本信息</h3>
+                    <div style="display: grid; gap: 1rem;">
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">昵称</label>
+                            <input type="text" style="width: 100%; padding: 0.75rem; border: 1px solid #e0e0e0; border-radius: 6px;" id="nicknameInput" placeholder="请输入昵称">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">个人简介</label>
+                            <textarea style="width: 100%; padding: 0.75rem; border: 1px solid #e0e0e0; border-radius: 6px; min-height: 100px;" id="bioInput" placeholder="请输入个人简介"></textarea>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">邮箱地址</label>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <input type="email" style="flex: 1; padding: 0.75rem; border: 1px solid #e0e0e0; border-radius: 6px;" id="emailInput" placeholder="请输入邮箱地址">
+                                <button type="button" class="btn btn-secondary" onclick="sendEmailVerification()" style="white-space: nowrap;">发送验证码</button>
+                            </div>
+                            <div id="emailVerification" style="display: none; margin-top: 0.5rem;">
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <input type="text" style="flex: 1; padding: 0.75rem; border: 1px solid #e0e0e0; border-radius: 6px;" id="verificationCode" placeholder="请输入验证码">
+                                    <button type="button" class="btn btn-primary" onclick="verifyEmail()">验证</button>
+                                </div>
+                                <div id="emailStatus" style="font-size: 0.9rem; margin-top: 0.25rem;"></div>
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">性别</label>
+                                <select style="width: 100%; padding: 0.75rem; border: 1px solid #e0e0e0; border-radius: 6px;" id="genderSelect">
+                                    <option value="">请选择</option>
+                                    <option value="male">男</option>
+                                    <option value="female">女</option>
+                                    <option value="other">其他</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">出生年月</label>
+                                <input type="date" style="width: 100%; padding: 0.75rem; border: 1px solid #e0e0e0; border-radius: 6px;" id="birthDateInput">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="margin-bottom: 1rem;">安全设置</h3>
+                    <div style="display: grid; gap: 1rem;">
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">修改密码</label>
+                            <div style="display: grid; gap: 0.75rem;">
+                                <input type="password" style="width: 100%; padding: 0.75rem; border: 1px solid #e0e0e0; border-radius: 6px;" id="currentPassword" placeholder="当前密码">
+                                <input type="password" style="width: 100%; padding: 0.75rem; border: 1px solid #e0e0e0; border-radius: 6px;" id="newPassword" placeholder="新密码">
+                                <input type="password" style="width: 100%; padding: 0.75rem; border: 1px solid #e0e0e0; border-radius: 6px;" id="confirmPassword" placeholder="确认新密码">
+                                <button type="button" class="btn btn-secondary" onclick="changePassword()">修改密码</button>
+                            </div>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">安全选项</label>
+                            <div style="display: grid; gap: 0.75rem;">
+                                <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="twoFactorAuth">
+                                    <span>启用双重验证</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="loginAlerts">
+                                    <span>登录提醒</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="sessionTimeout">
+                                    <span>自动登出（30分钟无操作）</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="margin-bottom: 1rem;">隐私设置</h3>
+                    <div style="display: grid; gap: 1rem;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="privateProfile">
+                            <span>设为私密账号</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="hideEmail">
+                            <span>隐藏邮箱地址</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="hideBirthday">
+                            <span>隐藏出生年月</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="hideGender">
+                            <span>隐藏性别</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="margin-bottom: 1rem;">账号安全</h3>
+                    <div style="display: grid; gap: 1rem;">
+                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 6px;">
+                            <h4 style="margin-bottom: 0.5rem;">登录设备管理</h4>
+                            <p style="color: #666; margin-bottom: 1rem;">查看和管理已登录的设备</p>
+                            <button type="button" class="btn btn-secondary" onclick="viewLoginDevices()">查看设备</button>
+                        </div>
+                        <div style="background: #f8f9fa; padding: 1rem; border-radius: 6px;">
+                            <h4 style="margin-bottom: 0.5rem;">账号保护</h4>
+                            <p style="color: #666; margin-bottom: 1rem;">增强账号安全保护</p>
+                            <button type="button" class="btn btn-secondary" onclick="enableAccountProtection()">启用保护</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 1rem;">
+                    <button class="btn btn-primary" onclick="saveSettings()">保存设置</button>
+                    <button class="btn btn-secondary" onclick="resetSettings()">重置</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 检查登录状态
+        function checkLogin() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            if (!isLoggedIn || isLoggedIn !== 'true') {
+                alert('请先登录！');
+                window.location.href = 'login.html';
+                return false;
+            }
+            return true;
+        }
+        
+        // 加载用户信息
+        function loadUserInfo() {
+            if (!checkLogin()) return;
+            
+            const username = localStorage.getItem('username') || '用户';
+            const email = localStorage.getItem('email') || '未设置邮箱';
+            
+            document.getElementById('userName').textContent = username;
+            document.getElementById('userEmail').textContent = email;
+            document.getElementById('userAvatar').textContent = username.charAt(0).toUpperCase();
+            
+            // 加载统计数据
+            loadUserStats();
+            
+            // 加载帖子数据
+            loadUserPosts();
+            
+            // 加载贴吧数据
+            loadUserBars();
+        }
+        
+        // 加载用户统计数据
+        function loadUserStats() {
+            // 模拟数据
+            document.getElementById('postCount').textContent = '28';
+            document.getElementById('barCount').textContent = '12';
+            document.getElementById('likeCount').textContent = '356';
+        }
+        
+        // 加载用户帖子
+        function loadUserPosts() {
+            const postsGrid = document.getElementById('postsGrid');
+            
+            // 模拟帖子数据
+            const posts = [
+                {
+                    title: '今天天气真好，适合出去走走',
+                    content: '阳光明媚，微风不燥，真是个适合户外活动的好日子...',
+                    time: '2小时前',
+                    likes: 15
+                },
+                {
+                    title: '分享一个学习编程的好方法',
+                    content: '最近发现通过项目实践来学习编程效果特别好...',
+                    time: '1天前',
+                    likes: 42
+                },
+                {
+                    title: '关于人工智能的未来发展',
+                    content: '人工智能技术正在快速发展，未来将会深刻改变我们的生活...',
+                    time: '3天前',
+                    likes: 89
+                },
+                {
+                    title: '推荐几本最近读的好书',
+                    content: '《三体》系列真的让人震撼，科幻迷必读...',
+                    time: '5天前',
+                    likes: 67
+                },
+                {
+                    title: '周末去爬山的照片分享',
+                    content: '山顶的风景太美了，虽然累但很值得...',
+                    time: '1周前',
+                    likes: 124
+                },
+                {
+                    title: 'Python数据分析实战经验',
+                    content: '使用pandas和matplotlib处理数据真的很方便...',
+                    time: '2周前',
+                    likes: 98
+                },
+                {
+                    title: '最近迷上了摄影，求指导',
+                    content: '刚入手单反，还在学习构图和光线控制...',
+                    time: '3周前',
+                    likes: 56
+                },
+                {
+                    title: '旅行攻略：云南大理自由行',
+                    content: '大理的洱海和古城真的很美，强烈推荐...',
+                    time: '1月前',
+                    likes: 203
+                }
+            ];
+            
+            if (posts.length === 0) {
+                postsGrid.innerHTML = `
+                    <div class="empty-state">
+                        <h3>还没有发布过帖子</h3>
+                        <p>去贴吧发帖，分享你的想法吧！</p>
+                        <button class="btn btn-primary" onclick="window.location.href='bars.html'">去发帖</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            postsGrid.innerHTML = posts.map(post => `
+                <div class="post-card">
+                    <div class="post-image">${getPostEmoji(post.title)}</div>
+                    <div class="post-content-wrapper">
+                        <div class="post-title">${post.title}</div>
+                        <div class="post-content">${post.content}</div>
+                        <div class="post-meta">
+                            <span>${post.time}</span>
+                            <span>❤️ ${post.likes}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // 获取帖子表情符号
+        function getPostEmoji(title) {
+            const emojiMap = {
+                'Vue3': '📱',
+                'React': '⚛️',
+                'JavaScript': '💻',
+                'Python': '🐍',
+                '摄影': '📷',
+                '旅行': '🏔️',
+                '电影': '🎬',
+                '健身': '💪',
+                '游戏': '🎮',
+                '美食': '🍲',
+                '股票': '📈',
+                '好书': '📚',
+                '爬山': '⛰️',
+                '数据分析': '📊',
+                '学习': '📖',
+                '云南': '🏞️'
+            };
+            
+            for (const [keyword, emoji] of Object.entries(emojiMap)) {
+                if (title.includes(keyword)) {
+                    return emoji;
+                }
+            }
+            return '📄';
+        }
+        
+        // 加载用户关注的贴吧
+        function loadUserBars() {
+            const barsGrid = document.getElementById('barsGrid');
+            
+            // 模拟贴吧数据
+            const bars = [
+                { name: '编程', members: '12.5万', followed: true },
+                { name: '摄影', members: '8.7万', followed: true },
+                { name: '旅行', members: '15.3万', followed: true },
+                { name: '美食', members: '23.1万', followed: true },
+                { name: '游戏', members: '18.9万', followed: true },
+                { name: '电影', members: '14.2万', followed: true },
+                { name: '音乐', members: '11.3万', followed: true },
+                { name: '读书', members: '6.7万', followed: true },
+                { name: '健身', members: '7.6万', followed: true },
+                { name: '动漫', members: '15.6万', followed: true },
+                { name: '数码', members: '10.2万', followed: true },
+                { name: '汽车', members: '9.4万', followed: true }
+            ];
+            
+            if (bars.length === 0) {
+                barsGrid.innerHTML = `
+                    <div class="empty-state">
+                        <h3>还没有关注任何贴吧</h3>
+                        <p>去发现有趣的贴吧吧！</p>
+                        <button class="btn btn-primary" onclick="window.location.href='bars.html'">浏览贴吧</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            barsGrid.innerHTML = bars.map(bar => `
+                <div class="bar-card">
+                    <div class="bar-name">${bar.name}吧</div>
+                    <div class="bar-members">${bar.members} 成员</div>
+                    <button class="btn btn-outline" onclick="unfollowBar('${bar.name}')">取消关注</button>
+                </div>
+            `).join('');
+        }
+        
+        // 切换标签页
+        function switchTab(tabName) {
+            // 隐藏所有标签页内容
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // 移除所有标签页按钮的active类
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // 显示选中的标签页内容
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // 为选中的标签页按钮添加active类
+            event.target.classList.add('active');
+        }
+        
+        // 取消关注贴吧
+        function unfollowBar(barName) {
+            if (confirm(`确定要取消关注 ${barName}吧 吗？`)) {
+                alert(`已取消关注 ${barName}吧`);
+                loadUserBars(); // 重新加载贴吧列表
+            }
+        }
+        
+        // 发送邮箱验证码
+        function sendEmailVerification() {
+            const email = document.getElementById('emailInput').value;
+            if (!email) {
+                alert('请输入邮箱地址');
+                return;
+            }
+            
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                alert('请输入有效的邮箱地址');
+                return;
+            }
+            
+            // 模拟发送验证码
+            const verificationCode = Math.floor(100000 + Math.random() * 900000);
+            localStorage.setItem('emailVerificationCode', verificationCode.toString());
+            localStorage.setItem('emailVerificationTime', Date.now().toString());
+            
+            // 显示验证码输入区域
+            document.getElementById('emailVerification').style.display = 'block';
+            document.getElementById('emailStatus').textContent = '验证码已发送到您的邮箱，有效期为10分钟';
+            document.getElementById('emailStatus').style.color = '#28a745';
+            
+            // 禁用发送按钮60秒
+            const sendButton = document.querySelector('button[onclick="sendEmailVerification()"]');
+            sendButton.disabled = true;
+            sendButton.textContent = '60秒后重发';
+            
+            let countdown = 60;
+            const timer = setInterval(() => {
+                countdown--;
+                sendButton.textContent = `${countdown}秒后重发`;
+                
+                if (countdown <= 0) {
+                    clearInterval(timer);
+                    sendButton.disabled = false;
+                    sendButton.textContent = '发送验证码';
+                }
+            }, 1000);
+        }
+        
+        // 验证邮箱
+        function verifyEmail() {
+            const code = document.getElementById('verificationCode').value;
+            const storedCode = localStorage.getItem('emailVerificationCode');
+            const storedTime = localStorage.getItem('emailVerificationTime');
+            
+            if (!code) {
+                alert('请输入验证码');
+                return;
+            }
+            
+            if (!storedCode || !storedTime) {
+                alert('请先发送验证码');
+                return;
+            }
+            
+            // 检查验证码是否过期（10分钟）
+            const currentTime = Date.now();
+            if (currentTime - parseInt(storedTime) > 10 * 60 * 1000) {
+                alert('验证码已过期，请重新发送');
+                return;
+            }
+            
+            if (code === storedCode) {
+                const email = document.getElementById('emailInput').value;
+                localStorage.setItem('email', email);
+                localStorage.setItem('emailVerified', 'true');
+                
+                document.getElementById('emailStatus').textContent = '邮箱验证成功！';
+                document.getElementById('emailStatus').style.color = '#28a745';
+                alert('邮箱验证成功！');
+            } else {
+                document.getElementById('emailStatus').textContent = '验证码错误，请重新输入';
+                document.getElementById('emailStatus').style.color = '#dc3545';
+            }
+        }
+        
+        // 修改密码
+        function changePassword() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                alert('请填写所有密码字段');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                alert('新密码和确认密码不一致');
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                alert('新密码长度至少为6位');
+                return;
+            }
+            
+            // 模拟密码修改成功
+            alert('密码修改成功！');
+            
+            // 清空密码字段
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+        }
+        
+        // 查看登录设备
+        function viewLoginDevices() {
+            alert('登录设备管理功能正在开发中...');
+        }
+        
+        // 启用账号保护
+        function enableAccountProtection() {
+            alert('账号保护功能正在开发中...');
+        }
+        
+        // 重置设置
+        function resetSettings() {
+            if (confirm('确定要重置所有设置吗？这将清除您当前的设置。')) {
+                document.getElementById('nicknameInput').value = '';
+                document.getElementById('bioInput').value = '';
+                document.getElementById('emailInput').value = '';
+                document.getElementById('genderSelect').value = '';
+                document.getElementById('birthDateInput').value = '';
+                document.getElementById('privateProfile').checked = false;
+                document.getElementById('hideEmail').checked = false;
+                document.getElementById('hideBirthday').checked = false;
+                document.getElementById('hideGender').checked = false;
+                document.getElementById('twoFactorAuth').checked = false;
+                document.getElementById('loginAlerts').checked = false;
+                document.getElementById('sessionTimeout').checked = false;
+                
+                alert('设置已重置');
+            }
+        }
+        
+        // 保存设置
+        function saveSettings() {
+            const nickname = document.getElementById('nicknameInput').value;
+            const bio = document.getElementById('bioInput').value;
+            const email = document.getElementById('emailInput').value;
+            const gender = document.getElementById('genderSelect').value;
+            const birthDate = document.getElementById('birthDateInput').value;
+            const privateProfile = document.getElementById('privateProfile').checked;
+            const hideEmail = document.getElementById('hideEmail').checked;
+            const hideBirthday = document.getElementById('hideBirthday').checked;
+            const hideGender = document.getElementById('hideGender').checked;
+            const twoFactorAuth = document.getElementById('twoFactorAuth').checked;
+            const loginAlerts = document.getElementById('loginAlerts').checked;
+            const sessionTimeout = document.getElementById('sessionTimeout').checked;
+            
+            // 验证邮箱是否已验证
+            const emailVerified = localStorage.getItem('emailVerified') === 'true';
+            if (email && !emailVerified) {
+                alert('请先验证邮箱地址');
+                return;
+            }
+            
+            // 保存到localStorage
+            localStorage.setItem('nickname', nickname);
+            localStorage.setItem('bio', bio);
+            localStorage.setItem('email', email);
+            localStorage.setItem('gender', gender);
+            localStorage.setItem('birthDate', birthDate);
+            localStorage.setItem('privateProfile', privateProfile);
+            localStorage.setItem('hideEmail', hideEmail);
+            localStorage.setItem('hideBirthday', hideBirthday);
+            localStorage.setItem('hideGender', hideGender);
+            localStorage.setItem('twoFactorAuth', twoFactorAuth);
+            localStorage.setItem('loginAlerts', loginAlerts);
+            localStorage.setItem('sessionTimeout', sessionTimeout);
+            
+            alert('设置已保存！');
+        }
+        
+        // 清除缓存并导航
+        function clearCacheAndNavigate(url) {
+            event.preventDefault();
+            window.location.href = url + '?' + new Date().getTime();
+        }
+        
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('username');
+                localStorage.removeItem('email');
+                window.location.href = 'index.html?' + new Date().getTime();
+            }
+        }
+        
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserInfo();
+            loadUserSettings();
+        });
+        
+        // 加载用户设置
+        function loadUserSettings() {
+            const nickname = localStorage.getItem('nickname') || '';
+            const bio = localStorage.getItem('bio') || '';
+            const email = localStorage.getItem('email') || '';
+            const gender = localStorage.getItem('gender') || '';
+            const birthDate = localStorage.getItem('birthDate') || '';
+            const privateProfile = localStorage.getItem('privateProfile') === 'true';
+            const hideEmail = localStorage.getItem('hideEmail') === 'true';
+            const hideBirthday = localStorage.getItem('hideBirthday') === 'true';
+            const hideGender = localStorage.getItem('hideGender') === 'true';
+            const twoFactorAuth = localStorage.getItem('twoFactorAuth') === 'true';
+            const loginAlerts = localStorage.getItem('loginAlerts') === 'true';
+            const sessionTimeout = localStorage.getItem('sessionTimeout') === 'true';
+            
+            // 设置表单值
+            document.getElementById('nicknameInput').value = nickname;
+            document.getElementById('bioInput').value = bio;
+            document.getElementById('emailInput').value = email;
+            document.getElementById('genderSelect').value = gender;
+            document.getElementById('birthDateInput').value = birthDate;
+            document.getElementById('privateProfile').checked = privateProfile;
+            document.getElementById('hideEmail').checked = hideEmail;
+            document.getElementById('hideBirthday').checked = hideBirthday;
+            document.getElementById('hideGender').checked = hideGender;
+            document.getElementById('twoFactorAuth').checked = twoFactorAuth;
+            document.getElementById('loginAlerts').checked = loginAlerts;
+            document.getElementById('sessionTimeout').checked = sessionTimeout;
+            
+            // 如果邮箱已验证，显示验证状态
+            const emailVerified = localStorage.getItem('emailVerified') === 'true';
+            if (emailVerified && email) {
+                document.getElementById('emailStatus').textContent = '邮箱已验证';
+                document.getElementById('emailStatus').style.color = '#28a745';
+            }
+        }
+    </script>
+</body>
+</html>
